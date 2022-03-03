@@ -40,7 +40,7 @@ public class moduleclass {
     @NonNull
     @Override
     public String toString() {
-        return this.coursecode +" "+ this.name +" "+ this.AU;
+        return this.coursecode +" "+ this.name;
         //overriding toString
     }
 }

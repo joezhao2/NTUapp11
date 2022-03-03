@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -44,23 +45,23 @@ public class FirestoreListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firestore_list);
 
-        EditText searchBar =findViewById(R.id.searchbar);
-        searchBar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                Log.d("firebase","search box has changed to "+ editable.toString());
-            }
-        });
+//        EditText searchBar =findViewById(R.id.searchbar);
+//        searchBar.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                Log.d("firebasesearchbar","search box has changed to "+ editable.toString());
+//            }
+//        });
 
 
         ListView moduleListView = findViewById(R.id.moduleListView);
@@ -103,22 +104,47 @@ public class FirestoreListActivity extends AppCompatActivity {
         }
 */
     public void onRefreshClick(View view) {
-        mDb.collection(MODULES)
-                .get()//.get(); get all item
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        ArrayList<moduleclass> moduleslist = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            moduleclass m =document.toObject(moduleclass.class);
-                            moduleslist.add(m);
-                            Log.d("firebase", m.getCoursecode() + " "+m.getName()+" "+m.getAU());
-                        }
-                        adapter.clear();
-                        adapter.addAll(moduleslist);
-                    }
 
-                });
+        EditText searchBar =findViewById(R.id.searchbar);
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                Log.d("firebasesearchbar","search box has changed to "+ editable.toString());
+                mDb.collection(MODULES)
+                        .whereEqualTo("coursecode",editable.toString())
+                        .get()//.get(); get all item
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                ArrayList<moduleclass> moduleslist = new ArrayList<>();
+                                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                    moduleclass m =document.toObject(moduleclass.class);
+                                    moduleslist.add(m);
+                                    Log.d("firebase", m.getCoursecode() + " "+m.getName()+" "+m.getAU());
+                                }
+                                adapter.clear();
+                                adapter.addAll(moduleslist);
+                            }
+
+                        });
+            }
+        });
+
+
+
+
+
+
 
 
     }
